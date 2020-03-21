@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.bdmcrudrev.`object`.EmpModel
+import com.example.bdmcrudrev.`object`.LogModel
 
 class DatabaseHandler(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -20,6 +21,11 @@ class DatabaseHandler(context: Context) :
         private const val KEY_NAME = "name"
         private const val KEY_EMAIL = "email"
         private const val KEY_ADDRESS = "address"
+
+        private val TABLE_USER = "UserTable"
+        private val KEY_UID = "user_id"
+        private val KEY_UUSERNAME = "user_username"
+        private val KEY_UPASSWORD = "user_password"
     }
 
     //gun untuk create table
@@ -28,12 +34,70 @@ class DatabaseHandler(context: Context) :
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
                 + KEY_EMAIL + " TEXT," + KEY_ADDRESS + " TEXT" + ")")
         db?.execSQL(CREATE_CONTACTS_TABLE)
+        val CREATE_USER_TABLE = ("CREATE TABLE " + TABLE_USER +
+                "(" + KEY_UID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KEY_UUSERNAME + " TEXT," + KEY_UPASSWORD + " TEXT " + ");")
+        db?.execSQL(CREATE_USER_TABLE)
     }
 
     //fun untuk upgrade database
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db!!.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS)
+        db!!.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS + "," + TABLE_USER)
         onCreate(db)
+    }
+
+    fun addUser(log: LogModel) {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(KEY_UUSERNAME, log.logUsername)
+        contentValues.put(KEY_UPASSWORD, log.logPassword)
+
+        db.insert(TABLE_USER, null, contentValues)
+        db.close()
+    }
+
+    fun checkUser(email: String, password: String): Boolean {
+        val columns = arrayOf(KEY_UID)
+        val db = this.readableDatabase
+        val selection = "$KEY_UUSERNAME = ? AND $KEY_UPASSWORD =?"
+        val selectionArgs = arrayOf(email, password)
+        val cursor = db.query(
+            TABLE_USER,
+            columns,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+        val cursorCount = cursor.count
+        cursor.close()
+        db.close()
+        if (cursorCount > 0)
+            return true
+        return false
+    }
+
+    fun checkUser(email: String): Boolean {
+        val columns = arrayOf(KEY_UID)
+        val db = this.readableDatabase
+        val selection = "$KEY_UUSERNAME = ? "
+        val selectionArgs = arrayOf(email)
+        val cursor = db.query(
+            TABLE_USER,
+            columns,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+        val cursorCount = cursor.count
+        cursor.close()
+        db.close()
+        if (cursorCount > 0)
+            return true
+        return false
     }
 
     // fun untuk menambahkan data
@@ -73,7 +137,12 @@ class DatabaseHandler(context: Context) :
                 userName = cursor.getString(cursor.getColumnIndex("name"))
                 userEmail = cursor.getString(cursor.getColumnIndex("email"))
                 userAddress = cursor.getString(cursor.getColumnIndex("address"))
-                val emp = EmpModel(userId = userId, userName = userName, userEmail = userEmail, userAddress = userAddress)
+                val emp = EmpModel(
+                    userId = userId,
+                    userName = userName,
+                    userEmail = userEmail,
+                    userAddress = userAddress
+                )
                 empList.add(emp)
             } while (cursor.moveToNext())
         }
@@ -95,12 +164,12 @@ class DatabaseHandler(context: Context) :
     }
 
     // fun untuk menghapus data
-    fun deleteEmployee(emp: EmpModel):Int{
-        val db=this.writableDatabase
-        val contentValues=ContentValues()
+    fun deleteEmployee(emp: EmpModel): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
         // employee id dari data yang akan dihapus
-        contentValues.put(KEY_ID,emp.userId)
-        val success=db.delete(TABLE_CONTACTS,"id="+emp.userId,null)
+        contentValues.put(KEY_ID, emp.userId)
+        val success = db.delete(TABLE_CONTACTS, "id=" + emp.userId, null)
         db.close()
         return success
     }

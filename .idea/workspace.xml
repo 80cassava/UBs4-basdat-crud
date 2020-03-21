@@ -26,10 +26,18 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="layoutResourceFile" />
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
   <component name="ProjectId" id="1ZOaTI2JrWZwdgQtnQmPa8Yy3XK" />
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/drawable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/drawable-v24" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
@@ -38,8 +46,14 @@
       <recent name="com.example.bdmcrudrev.object" />
       <recent name="com.example.bdmcrudrev.helper" />
     </key>
+    <key name="android.template.packageName">
+      <recent name="com.example.bdmcrudrev" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\muhsyahset\AndroidStudioProjects\BDMcrudRev\app\src\main\res\drawable-v24" />
+      <recent name="C:\Users\muhsyahset\AndroidStudioProjects\BDMcrudRev\app\src\main\res" />
       <recent name="C:\Users\muhsyahset\AndroidStudioProjects\BDMcrudRev\app\src\main\res\drawable" />
+      <recent name="C:\Users\muhsyahset\AndroidStudioProjects\BDMcrudRev\app\src\main\res\values" />
       <recent name="C:\Users\muhsyahset\AndroidStudioProjects\BDMcrudRev\app\src\main\res\layout" />
     </key>
   </component>

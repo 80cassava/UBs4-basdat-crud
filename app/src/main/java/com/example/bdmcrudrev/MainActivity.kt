@@ -1,14 +1,19 @@
 package com.example.bdmcrudrev
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,13 +21,18 @@ import com.example.bdmcrudrev.`object`.EmpModel
 import com.example.bdmcrudrev.helper.EmpAdapter
 import com.example.bdmcrudrev.model.DatabaseHandler
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //insialisasi toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         viewRecord()//memanggil fun viewRecord
 
         //mengatur item tarik untuk refresh(swipe to refresh) list data
@@ -43,6 +53,44 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             createRecord()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.action_logout -> {
+                val sharedPreferences = getSharedPreferences("CEKLOGIN", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putString("STATUS", "0")
+                editor.apply()
+                Toast.makeText(applicationContext, "Logout", Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, LoginActivity::class.java))
+                true
+            }
+            R.id.action_proflie -> {
+                val sharedPreferences = getSharedPreferences("CEKLOGIN", Context.MODE_PRIVATE)
+                val username = sharedPreferences.getString("USERNAME", "")
+//                showHelp()
+                Toast.makeText(applicationContext, "Anda login sebagai $username", Toast.LENGTH_LONG).show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        val sharedPreferences = getSharedPreferences("CEKLOGIN", Context.MODE_PRIVATE)
+        val username = sharedPreferences.getString("USERNAME", "")
+
+        val item: MenuItem = menu!!.findItem(R.id.action_proflie)
+        item.setTitle("Hy, $username")
+        return super.onPrepareOptionsMenu(menu)
     }
 
     //fun untuk menambah data
